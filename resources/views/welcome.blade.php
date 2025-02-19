@@ -1215,7 +1215,7 @@
 		<img id="background" class="absolute -left-20 top-0 max-w-[877px]" src="https://laravel.com/assets/img/welcome/background.svg"
 			alt="Laravel background" />
 		<div class="relative min-h-screen flex flex-col items-center justify-center selection:bg-[#FF2D20] selection:text-white">
-			<div class="relative w-full max-w-2xl px-6 lg:max-w-7xl">
+			<div class="relative w-full max-w-2xl px-6 lg:max-w-7xl 2xl:max-w-[calc(100%_+_8rem)]">
 				<header class="grid grid-cols-2 items-center gap-2 py-10 lg:grid-cols-3">
 					<div class="flex lg:justify-center lg:col-start-2">
 						<svg class="h-12 w-auto text-white lg:h-16 lg:text-[#FF2D20]" viewBox="0 0 62 65" fill="none"
@@ -1225,182 +1225,19 @@
 								fill="currentColor" />
 						</svg>
 					</div>
-					@if (Route::has('login'))
-						<nav class="-mx-3 flex flex-1 justify-end">
-							@auth
-								<a href="{{ url('/dashboard') }}"
-									class="rounded-md px-3 py-2 text-black ring-1 ring-transparent transition hover:text-black/70 focus:outline-none focus-visible:ring-[#FF2D20] dark:text-white dark:hover:text-white/80 dark:focus-visible:ring-white">
-									Dashboard
-								</a>
-							@else
-								<a href="{{ route('login') }}"
-									class="rounded-md px-3 py-2 text-black ring-1 ring-transparent transition hover:text-black/70 focus:outline-none focus-visible:ring-[#FF2D20] dark:text-white dark:hover:text-white/80 dark:focus-visible:ring-white">
-									Log in
-								</a>
 
-								@if (Route::has('register'))
-									<a href="{{ route('register') }}"
-										class="rounded-md px-3 py-2 text-black ring-1 ring-transparent transition hover:text-black/70 focus:outline-none focus-visible:ring-[#FF2D20] dark:text-white dark:hover:text-white/80 dark:focus-visible:ring-white">
-										Register
-									</a>
-								@endif
-							@endauth
-						</nav>
-					@endif
 				</header>
 
-				<main class="mt-6">
-					<!-- Filter Section -->
-					<div class="flex flex-col sm:flex-row items-center mb-6 gap-4">
-						<!-- Country Dropdown -->
-						<div>
-							<label for="countrySelect" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Country</label>
-							<select id="countrySelect" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm dark:bg-gray-800">
-								<option value="">All Countries</option>
-								@foreach ($countries as $country)
-									<option value="{{ $country }}">{{ strtoupper($country) }}</option>
-								@endforeach
-							</select>
-						</div>
-
-						<!-- Page Dropdown -->
-						<div>
-							<label for="pageSelect" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Page</label>
-							<select id="pageSelect" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm dark:bg-gray-800">
-								<option value="1">1</option>
-								<option value="2">2</option>
-								<option value="3">3</option>
-							</select>
-						</div>
-
-						<!-- Offset Dropdown -->
-						<div>
-							<label for="offsetSelect" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Offset</label>
-							<select id="offsetSelect" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm dark:bg-gray-800">
-								<option value="0">0</option>
-								<option value="10">10</option>
-								<option value="20">20</option>
-								<!-- Add more offset options as needed -->
-							</select>
-						</div>
-
-						<!-- Fetch Button -->
-						<div class="mt-6 sm:mt-8">
-							<button id="fetchBtn" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
-								Fetch Data
-							</button>
-						</div>
-					</div>
-
-					<!-- Country Info Section -->
-					<div id="country-info" class="space-y-8"></div>
-
-					<script>
-						function fetchCountries() {
-							const country = document.getElementById('countrySelect').value;
-							const page = document.getElementById('pageSelect').value;
-							const offset = document.getElementById('offsetSelect').value;
-
-							// Build the API URL with query parameters
-							const queryParams = new URLSearchParams({
-								country,
-								page,
-								offset
-							});
-							const url = `/countries?${queryParams.toString()}`;
-
-							fetch(url)
-								.then(response => response.json())
-								.then(result => {
-									const container = document.getElementById('country-info');
-									container.innerHTML = ''; // Clear previous results
-
-									result.data.forEach(countryData => {
-										// Create a container for each country
-										const countryDiv = document.createElement('div');
-										countryDiv.classList.add("border", "p-4", "rounded-md", "bg-white", "dark:bg-gray-800");
-
-										// Display country code as a heading
-										const heading = document.createElement('h2');
-										heading.textContent = countryData.country.toUpperCase();
-										heading.classList.add("text-2xl", "font-semibold", "mb-2");
-										countryDiv.appendChild(heading);
-
-										// Display the Wikipedia extract
-										const extract = document.createElement('p');
-										extract.textContent = countryData.wikipedia_extract;
-										extract.classList.add("mb-4");
-										countryDiv.appendChild(extract);
-
-										// Create a list for YouTube videos (if available)
-										if (countryData.videos && countryData.videos.length > 0) {
-											const videoHeading = document.createElement('h3');
-											videoHeading.textContent = 'Popular Videos';
-											videoHeading.classList.add("text-xl", "font-medium", "mb-2");
-											countryDiv.appendChild(videoHeading);
-
-											const videoList = document.createElement('ul');
-											videoList.classList.add("space-y-4");
-
-											countryData.videos.forEach(video => {
-												const videoItem = document.createElement('li');
-												videoItem.classList.add("flex", "gap-4", "items-start");
-
-												// Thumbnail image
-												if (video.thumbnails && video.thumbnails.medium) {
-													const img = document.createElement('img');
-													img.src = video.thumbnails.medium;
-													img.alt = video.title;
-													img.classList.add("w-24", "h-24", "object-cover", "rounded");
-													videoItem.appendChild(img);
-												}
-
-												// Video details
-												const details = document.createElement('div');
-
-												const title = document.createElement('strong');
-												title.textContent = video.title;
-												title.classList.add("block");
-												details.appendChild(title);
-
-												const description = document.createElement('p');
-												description.textContent = video.description;
-												description.classList.add("text-sm", "text-gray-700");
-												details.appendChild(description);
-
-												const published = document.createElement('span');
-												published.textContent = new Date(video.publishedAt).toLocaleDateString();
-												published.classList.add("text-xs", "text-gray-500");
-												details.appendChild(published);
-
-												videoItem.appendChild(details);
-												videoList.appendChild(videoItem);
-											});
-
-											countryDiv.appendChild(videoList);
-										}
-										// Append the country's section to the main container.
-										container.appendChild(countryDiv);
-									});
-								})
-								.catch(error => {
-									console.error('Error fetching data:', error);
-								});
-						}
-
-						// Attach event listener to the Fetch button
-						document.getElementById('fetchBtn').addEventListener('click', (e) => {
-							e.preventDefault();
-							fetchCountries();
-						});
-
-						// Optionally, load default data on page load
-						fetchCountries();
-					</script>
-				</main>
+				<div id="app">
+					<country-videos :countries="{{ json_encode($countries) }}"></country-videos>
+				</div>
 
 				<footer class="py-16 text-center text-sm text-black dark:text-white/70">
 					Laravel v{{ Illuminate\Foundation\Application::VERSION }} (PHP v{{ PHP_VERSION }})
+					<!-- also show DB driver -->
+					Database {{ DB::connection()->getPdo()->getAttribute(PDO::ATTR_DRIVER_NAME) }}
+					<!-- also show cache driver -->
+					Cache {{ config('cache.default') }}
 				</footer>
 			</div>
 		</div>
