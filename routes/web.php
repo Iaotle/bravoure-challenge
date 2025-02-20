@@ -11,6 +11,10 @@ Route::get('/', function () {
 	return view('welcome')->with('countries', Country::pluck('name', 'iso_alpha_2'));
 });
 
+Route::get('/supported-countries', function () {
+	return Country::pluck('name', 'iso_alpha_2');
+});
+
 // 2 routes, one to run CountrySeeder, and one to run FullCountrySeeder
 Route::get('/seed-countries', function () {
 	Artisan::call('db:seed', ['--class' => 'CountrySeeder']);
@@ -31,7 +35,6 @@ Route::get('/clear-country-cache/{country}', function ($country) {
 	$countryTag = 'country-' . strtolower($country);
 	// Flush wikipedia and YouTube caches for the specified country
 	Cache::tags([$countryTag])->flush();
-	// Optionally, reset the country description in your database
 	Country::where('iso_alpha_2', $country)->update(['description' => null]);
 	return 'Country cache cleared';
 });

@@ -37,8 +37,8 @@ return [
 
     'youtube' => [
         'api_key' => env('YOUTUBE_API_KEY'),
-        // 'cache_duration' => env('YOUTUBE_CACHE_DURATION', 60 * 24), // in minutes
-        'pagetokens' => env('YOUTUBE_PAGETOKENS', '/home/iaotle/bravoure-challenge/yt.pagetokens'),
+        'pagetokens' => env('YOUTUBE_PAGETOKENS'),
+        'cache_duration_minutes' => env('YOUTUBE_CACHE_DURATION_MINUTES', 60 * 24),
     ],
 
 ];

@@ -12,7 +12,7 @@ use App\Models\Country;
 
 class WikipediaClient {
 	private const API_URL = 'https://en.wikipedia.org/w/api.php';
-	private const CACHE_DURATION_HOURS = 1; // Cache for 1 hour, this will speed up the application and reduce the number of API/DB calls.
+	private const CACHE_DURATION_MINUTES = 60 * 24; // Cache for 24 hours, this will speed up the application and reduce the number of API/DB calls.
 
 	public function __construct(private HTTPClient $http, private CacheRepository $cache) {}
 
@@ -32,10 +32,11 @@ class WikipediaClient {
 		if ($cache->supportsTags()) {
 			$cache->tags($tags);
 		}
+
 	
 		return $cache->remember(
 			$cacheKey,
-			now()->addHours(self::CACHE_DURATION_HOURS),
+			now()->addMinutes(self::CACHE_DURATION_MINUTES),
 			function () use ($countryCode) {
 				$country = Country::where('iso_alpha_2', $countryCode)->first();
 				if (!$country) {

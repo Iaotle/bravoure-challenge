@@ -7,6 +7,7 @@ use App\Models\Country;
 use App\Clients\WikipediaClient;
 use App\Clients\YouTubeClient;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 
 class CountryControllerTest extends TestCase {
@@ -61,6 +62,7 @@ class CountryControllerTest extends TestCase {
 	}
 
 	public function test_fetching_all_pages_for_single_country_makes_ceil_total_results_over_50_requests() {
+		Cache::flush();
 		// Total results and expected API calls
 		$totalResults = 120;
 		$expectedApiCalls = (int) ceil($totalResults / 50); // 3
@@ -94,27 +96,35 @@ class CountryControllerTest extends TestCase {
 	}
 
 	private function mockYouTubeResponse(int $videosCount, ?string $nextPageToken, int $totalResults): array {
+		// Determine starting index based on the page token (assuming it's numeric)
+		$startIndex = $nextPageToken ? (int) $nextPageToken * $videosCount : 0;
+
 		return [
-			'items' => array_fill(0, $videosCount, [
-				'id' => 'dummyId',
-				'snippet' => [
-					'title' => 'Dummy Title',
-					'description' => 'Dummy Description',
-					'publishedAt' => '2023-01-01T00:00:00Z',
-					'thumbnails' => [
-						'default' => ['url' => 'http://example.com/default.jpg'],
-						'medium' => ['url' => 'http://example.com/medium.jpg'],
-						'high' => ['url' => 'http://example.com/high.jpg'],
+			'items' => array_map(function ($index) use ($startIndex) {
+				return [
+					'id' => 'dummyId_' . ($startIndex + $index),
+					'snippet' => [
+						'title' => 'Dummy Title ' . ($startIndex + $index),
+						'description' => 'Dummy Description',
+						'publishedAt' => '2023-01-01T00:00:00Z',
+						'thumbnails' => [
+							'default' => ['url' => 'http://example.com/default.jpg'],
+							'medium' => ['url' => 'http://example.com/medium.jpg'],
+							'high' => ['url' => 'http://example.com/high.jpg'],
+						],
 					],
-				],
-			]),
-			'nextToken' => $nextPageToken,
+				];
+			}, range(0, $videosCount - 1)),
+
+			'nextToken' => $nextPageToken !== null ? (string) ((int) $nextPageToken + 1) : null,
+
 			'pageInfo' => [
 				'totalResults' => $totalResults,
 			],
 		];
 	}
-	public function test_mock_token_service() {
+
+	public function test_using_mock_token_service() {
 		// Create a simple stub for the TokenService.
 		$tokenServiceStub = new class {
 			public function getTokenFromOffset($offset) {
@@ -142,23 +152,26 @@ class CountryControllerTest extends TestCase {
 
 		// Use Mockery to create a mock for the HttpClient.
 		$httpClientMock = \Mockery::mock(\Illuminate\Http\Client\Factory::class);
+		
 		$httpClientMock->shouldReceive('get')->andReturnUsing(function ($url, $params) use (&$httpCallCount) {
 			$httpCallCount++;
 
 			// Simulate a full page of videos (50 videos per page).
-			$videos = array_fill(0, \App\Clients\YouTubeClient::MAX_RESULTS, [
-				'snippet' => [
-					'title' => 'Dummy Video',
-					'description' => 'Dummy Description',
-					'publishedAt' => now()->toDateTimeString(),
-					'thumbnails' => [
-						'default' => ['url' => 'default.jpg'],
-						'medium' => ['url' => 'medium.jpg'],
-						'high' => ['url' => 'high.jpg'],
+			$videos = array_map(function ($index) {
+				return [
+					'snippet' => [
+						'title' => 'Dummy Video ' . ($index + 1),
+						'description' => 'Dummy Description',
+						'publishedAt' => now()->toDateTimeString(),
+						'thumbnails' => [
+							'default' => ['url' => 'default.jpg'],
+							'medium' => ['url' => 'medium.jpg'],
+							'high' => ['url' => 'high.jpg'],
+						],
 					],
-				],
-				'id' => 'dummy_id',
-			]);
+					'id' => 'dummy_id_' . $index,
+				];
+			}, range(0, \App\Clients\YouTubeClient::MAX_RESULTS - 1));
 
 			// Determine the nextPageToken based on the current token.
 			$currentToken = $params['pageToken'];
@@ -217,5 +230,11 @@ class CountryControllerTest extends TestCase {
 		$this->assertEquals(3, $httpCallCount);
 
 		\Mockery::close();
+	}
+
+	// clear cache, otherwise we have dummies in the main cache
+	protected function tearDown(): void {
+		Cache::flush();
+		parent::tearDown();
 	}
 }

@@ -33,10 +33,9 @@ class CountryController extends Controller {
 		// validate maxResults [1, 50]
 		if ($maxResults < 1) {
 			$maxResults = 5;
-		// } elseif ($maxResults > 50) {
-		// 	$maxResults = 50;
+			// } elseif ($maxResults > 50) {
+			// 	$maxResults = 50;
 		}
-
 		// List of country codes we support.
 		$countries = Country::pluck('iso_alpha_2')->toArray();
 		if ($countryParam && in_array($countryParam, $countries)) {
@@ -60,6 +59,7 @@ class CountryController extends Controller {
 				'wikipedia_extract' => $wikipediaExtract,
 			];
 			$result = array_merge($result, $youtubeVideos);
+			// dd($youtubeVideos);
 			$data[] = $result;
 		}
 

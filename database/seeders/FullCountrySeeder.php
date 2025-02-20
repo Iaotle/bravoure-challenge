@@ -14,7 +14,7 @@ class FullCountrySeeder extends Seeder {
 		// clear the countries table first:
 		\App\Models\Country::truncate();
 
-        $countries = Http::get('https://restcountries.com/v3.1/all?fields=cca2,name,altSpellings')->json();
+        $countries = Http::timeout(100)->retry(10)->get('https://restcountries.com/v3.1/all?fields=cca2,name,altSpellings')->json();
 		foreach ($countries as $country) {
 			\App\Models\Country::create([
 				'name' => $country['name']['common'],
