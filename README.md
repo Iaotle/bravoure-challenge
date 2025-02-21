@@ -9,12 +9,14 @@ You will need to have PHP, NPM, and Composer already installed. Refer to https:/
 Then you can clone and deploy the project using Laravel Sail:
 ```bash
 git clone https://github.com/Iaotle/bravoure-challenge.git project
-cp .env project/.env
 cd project
+# copy the .env.example file, preconfigured except for the YouTube API key.
+cp .env.example .env
+# IMPORTANT: add your own YouTube API key to the .env file (10'000 queries a day for free)
 composer install
 ./vendor/bin/sail up
 ```
-The one-time setup scripts that seed the database can be re-run on startup by deleting the .initialized file in the app's root directory.
+The one-time setup scripts that seed the database can be re-run on startup by deleting the `.initialized` file in the app's root directory.
 - Should run at port 9000 or APP_PORT.
 - Deploys one queue worker (see `supervisord.conf`)
 - Run `force_setup_sail.sh` to run some commands to reset/refresh container configuration if something is not working as expected. Will also run artisan tests.
