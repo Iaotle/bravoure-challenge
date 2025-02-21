@@ -129,7 +129,6 @@
 			>
 				<span>Fetch time: {{ timeTaken ? timeTaken.toFixed(2) + ' ms' : 'Loading...' }}</span>
 			</section>
-			<!-- TODO: fix arrow keys scrolling the page -->
 
 			<div v-if="errors != null" class="p-6 bg-red-500 text-white rounded-lg">
 				<p class="text-xl font-semibold">Error fetching data</p>
@@ -209,7 +208,7 @@ const timeTaken = ref(null);
 function isNumeric(n) {
 	return !isNaN(parseFloat(n)) && isFinite(n);
 }
-// TODO: debounce and cancel previous requests
+// TODO: debounce and cancel previous requests, display placeholders while loading, etc.
 
 // Fetch data function (now includes maxResults)
 async function fetchData(country = selectedCountry.value, pageToken = '') {
@@ -333,6 +332,11 @@ function handleKeydown(e) {
 	// Avoid triggering shortcuts when focused in inputs or editable elements
 	const tag = e.target.tagName.toLowerCase();
 	if (['select', 'input', 'textarea'].includes(tag) || e.target.isContentEditable) return;
+
+	// Prevent default scrolling behavior for arrow keys
+	if (['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'].includes(e.key)) {
+		e.preventDefault();
+	}
 
 	switch (e.key) {
 		case 'ArrowLeft':

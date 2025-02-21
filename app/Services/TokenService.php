@@ -2,11 +2,12 @@
 
 namespace App\Services;
 
+use App\Clients\YouTubeClient;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Cache;
 
 class TokenService {
-	const MAX_RESULTS = 50; // Move constant here if applicable
+	const MAX_RESULTS = YouTubeClient::MAX_RESULTS; // TODO: grab from client
 	const CACHE_KEY = 'youtube_pagetokens';
 
 	protected string $filePath;

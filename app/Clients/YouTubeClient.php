@@ -47,7 +47,6 @@ class YouTubeClient {
 		$totalResults = 0;
 		$youTubeNextToken = null;
 		$youTubePrevToken = null;
-		// TODO: handle rate limits? I never trigger them :)
 
 		// Loop over each needed page.
 		$cachedAt = now();
@@ -83,7 +82,7 @@ class YouTubeClient {
 					'key' => $this->apiKey,
 					'pageToken' => $youTubePageToken,
 				];
-				// TODO: laravel-ratelimit this route so we don't hit google API unnecessarily?
+				// TODO: laravel ratelimit this route so we don't hit google API unnecessarily?
 
 				$response = $this->http->get($this->apiUrl, $params);
 
@@ -115,6 +114,7 @@ class YouTubeClient {
 				$dispatched = true;
 			}
 
+			// Test showing errors in the UI
 			// dd(5);
 			// $dispatched['prefetcher'];
 
@@ -130,23 +130,6 @@ class YouTubeClient {
 			// get the oldest cached_at timestamp
 			$cachedAt = $when_cached && $when_cached < $cachedAt ? $when_cached : $cachedAt;
 			// Append the videos from this cached page.
-
-			if (isset($cachedPage['error'])) {
-				// dd($cachedPage['error']);
-				// array:3 [ // app/Clients/YouTubeClient.php:130
-				// 	"code" => 403
-				// 	"message" => "The request cannot be completed because you have exceeded your <a href="/youtube/v3/getting-started#quota">quota</a>."
-				// 	"errors" => array:1 [
-				// 	  0 => array:3 [
-				// 		"message" => "The request cannot be completed because you have exceeded your <a href="/youtube/v3/getting-started#quota">quota</a>."
-				// 		"domain" => "youtube.quota"
-				// 		"reason" => "quotaExceeded"
-				// 	  ]
-				// 	]
-				//   ]
-				// report error from above
-				
-			}
 			$allVideos = array_merge($allVideos, $cachedPage['videos']);
 		}
 
@@ -191,6 +174,7 @@ class YouTubeClient {
 
 		foreach ($data['items'] ?? [] as $item) {
 			$snippet = $item['snippet'] ?? [];
+			
 			$videos[$item['id']] = [
 				'title' => $snippet['title'] ?? '',
 				'description' => $snippet['description'] ?? '',

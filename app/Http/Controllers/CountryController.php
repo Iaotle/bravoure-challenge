@@ -59,7 +59,6 @@ class CountryController extends Controller {
 				'wikipedia_extract' => $wikipediaExtract,
 			];
 			$result = array_merge($result, $youtubeVideos);
-			// dd($youtubeVideos);
 			$data[] = $result;
 		}
 

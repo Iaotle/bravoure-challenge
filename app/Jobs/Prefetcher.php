@@ -13,7 +13,6 @@ use Illuminate\Support\Facades\Log;
 class Prefetcher implements ShouldQueue {
 	use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    // TODO: write a test for this job. I did some manual testing.
 	/**
 	 * Create a new job instance.
 	 *
