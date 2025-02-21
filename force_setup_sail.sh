@@ -2,6 +2,8 @@
 # start the container with sail up before running this script
 
 # Run one-time setup tasks inside the application container
+./vendor/bin/sail composer install
+./vendor/bin/sail npm install
 ./vendor/bin/sail artisan config:cache
 ./vendor/bin/sail artisan route:cache
 ./vendor/bin/sail artisan view:cache
