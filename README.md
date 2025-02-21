@@ -3,7 +3,7 @@
 ## Overview
 The project includes a Laravel job (`Prefetcher`) and a YouTube API client (`YouTubeClient`) that efficiently fetches and caches popular videos. It also includes a `WikipediaClient` for fetching country descriptions and various routes for cache management and data seeding.
 
-Some things are left as TODOs.
+Some things are left as TODOs. There is also an MVP (first commit), which offers a significantly reduced feature set and caches based on YouTube's own pageTokens. Their prevPageToken and nextPageToken implementation means that this method resulted in caching the same pages multiple times (for example, the first page with token CAAQAA becomes CDIQAA). I've implemented a wrapper that will allow you to specify any number of maxResults, and numerical pageTokens.
 
 ## How to deploy
 - `./vendor/bin/sail up`
@@ -13,14 +13,6 @@ Some things are left as TODOs.
 
 ### Local deployment
 You will have to change the .env file to use your own redis/db connections.
-
-
-## Feature highlights
-- I wanted to use `Job::dispatchAfterResponse()` to dispatch the job without interfering with the current process, but that requires FastCGI
-- Handles cache consistency by prefetching a full list.
-- Ensures unique video IDs to prevent duplicates.
-- Handles being rate-limited by returning `videos: [], errors: {...}`
-- Frontend in vue that displays cached videos, allows for controlling the various params for easy visual testing.
 
 
 ## E2E test in python
@@ -43,10 +35,11 @@ You will have to change the .env file to use your own redis/db connections.
 
 
 ## Country API
-- `/countries`: Main endpoint, returns the wikipedia extract and videos.
+- `/countries`: Main endpoint, returns the wikipedia extract and videos. Supports `country`, `pageToken`, `maxResults` query parameters.
 - `/supported-countries`: Fetches country names and ISO codes.
 
 ## Cache Management Routes
+Keep in mind that the database cache does not support tagging, while redis does.
 - `/clear-cache`: Clears all caches.
 - `/clear-country-cache/{country}`: Clears YouTube and Wikipedia caches for a specific country.
 - `/clear-youtube-cache`: Clears only the YouTube cache.
@@ -54,7 +47,7 @@ You will have to change the .env file to use your own redis/db connections.
 - `/clear-country-description`: Clears stored country descriptions in the database. If we already cached once from wikipedia, we will never make a request to the API and will instead use the DB
 
 ## Data Seeding Routes
-- `/seed-countries`: Runs `CountrySeeder`.
+- `/seed-countries`: Runs `CountrySeeder`. Seeds the default list of countries without talking to restcountries, so it should always work.
 - `/seed-full-countries`: Runs `FullCountrySeeder`. Not recommended as it will make a lot of network requests when requesting all countries for example. Also the restcountries API has some timeout problems so this might not be reliable (I put in a retry and timeout to the request and it's worked for me every time since, YMMV).
 
 
