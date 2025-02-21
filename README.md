@@ -2,7 +2,7 @@
 ## Overview
 The project includes a Laravel job (`Prefetcher`) and a YouTube API client (`YouTubeClient`) that efficiently fetches and caches popular videos. It also includes a `WikipediaClient` for fetching country descriptions and various routes for cache management and data seeding.
 
-Some things are left as TODOs. There is also an MVP (first commit), which offers a significantly reduced feature set and caches based on YouTube's own pageTokens. Their prevPageToken and nextPageToken implementation means that this method resulted in caching the same pages multiple times (for example, the first page with token CAAQAA becomes CDIQAA). I've implemented a wrapper that will allow you to specify any number of maxResults, and numerical pageTokens.
+Some things are left as TODOs. There is also an MVP (first commit), which offers a significantly reduced feature set and caches based on YouTube's own pageTokens. Their prevPageToken and nextPageToken implementation means that this method resulted in caching the same pages multiple times (for example, the first page with token CAAQAA becomes CDIQAQ). I've implemented a wrapper that will allow you to specify any number of maxResults, and numerical pageTokens.
 
 ## How to deploy
 You will need to have PHP, NPM, and Composer already installed. Refer to https://laravel.com/docs/11.x/installation#docker-installation-using-sail to setup Docker. I used Laravel v11.42.1, PHP v8.4.4, WSL2 + Docker Desktop on Windows.
