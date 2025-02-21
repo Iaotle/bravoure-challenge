@@ -58,6 +58,8 @@ You will have to change the .env file to use your own redis/db connections.
 - `/seed-full-countries`: Runs `FullCountrySeeder`. Not recommended as it will make a lot of network requests when requesting all countries for example. Also the restcountries API has some timeout problems so this might not be reliable (I put in a retry and timeout to the request and it's worked for me every time since, YMMV).
 
 
+# Main Laravel components
+
 ## Prefetcher Job
 - Uses a next-page token to prefetch and cache YouTube videos.
 - Gets dispatched to fetch a full list of videos for a country, recursively dispatches more jobs if there are more pages.
