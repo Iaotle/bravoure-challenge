@@ -1,4 +1,4 @@
-# YouTube Prefetcher Job & API Integration
+# Country Info Viewer: Popular YouTube video caching & Wikipedia information retreival
 
 ## Overview
 The project includes a Laravel job (`Prefetcher`) and a YouTube API client (`YouTubeClient`) that efficiently fetches and caches popular videos. It also includes a `WikipediaClient` for fetching country descriptions and various routes for cache management and data seeding.
