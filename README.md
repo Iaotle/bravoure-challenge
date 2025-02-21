@@ -13,6 +13,7 @@ cd project
 # copy the .env.example file, preconfigured except for the YouTube API key.
 cp .env.example .env
 # IMPORTANT: add your own YouTube API key to the .env file (10'000 queries a day for free)
+echo "YOUR_YOUTUBE_API_KEY" >> .env
 composer install
 ./vendor/bin/sail up
 ```
