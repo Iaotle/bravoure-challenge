@@ -28,7 +28,7 @@ You will have to change the .env file to use your own redis/db connections.
 
 ## Manual testing
 - Look in `storage/logs/laravel.log` for some debug outputs
-- Set DB/CACHE env variables to database and refresh the container to use a DB explorer like (e.g. phpmyadmin).
+- Set DB/CACHE env variables to database and refresh the container to use a DB explorer (like e.g. phpmyadmin).
 - Go to the frontend (default http://127.0.0.1:9000) and use it, here's an example of what it should look like:
 ![frontend](image.png)
 
