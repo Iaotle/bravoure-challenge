@@ -40,7 +40,6 @@ class CountriesPaginationTest(unittest.TestCase):
         
         startTime = time.time()
         # now that we fetched all the results into memory, we can test the cache. This test should take less than 10 seconds
-        video_ids_seen = set()
         total_videos_expected = None
 
         url = f"{APP_URL}/countries"
@@ -65,6 +64,7 @@ class CountriesPaginationTest(unittest.TestCase):
 
         country_data = json_data["data"]
         for country in country_data:
+            video_ids_seen = set()
             country_code = country.get("country")
 
             # Verify pagination offset matches the requested pageToken
@@ -78,7 +78,8 @@ class CountriesPaginationTest(unittest.TestCase):
                             f"numResults ({num_results}) does not match count of videos ({len(videos)}) for country={country_code}.")
 
             # Capture total expected results if provided
-            if total_videos_expected is None:
+            total = country.get("totalResults")
+            if total_videos_expected is None or total > total_videos_expected:
                 total_videos_expected = country.get("totalResults")
             if total_videos_expected == 0:
                 break
@@ -92,7 +93,7 @@ class CountriesPaginationTest(unittest.TestCase):
         # Validate the total number of unique videos
         if total_videos_expected is not None:
             self.assertEqual(len(video_ids_seen), total_videos_expected,
-                            f"Total unique videos ({len(video_ids_seen)}) does not match expected totalResults ({total_videos_expected}) for country={country_code}.")
+                            f"Total unique videos ({len(video_ids_seen)}) does not match expected totalResults ({total_videos_expected}) for country={country_code}. {videos}")
         print("Time taken for getting cached results: ", endTime - startTime)
         
 
