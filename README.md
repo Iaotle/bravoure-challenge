@@ -13,7 +13,7 @@ WWWUSER=1000
 You will need `docker-compose`.
 Then you can clone and deploy the project:
 ```bash
-git clone https://github.com/Iaotle/bravoure-challenge.git project
+git clone https://github.com/Iaotle/youtube-feed-laravel-app.git project
 cd project
 # copy the .env.example file, preconfigured except for the YouTube API key.
 cp .env.example .env
