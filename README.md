@@ -35,7 +35,7 @@ composer install
 ```
 Run `force_setup_sail.sh` to run some commands to reset/refresh container configuration if something is not working as expected. Will also run artisan tests.
 
-Running outside a Docker container will require you to also install a database client and a cache client (redis for example) and configure the app to use them in the .env file. You can then run the server yourself using `php artisan serve`, and compile the frontend using Vite: `npm run prod` (for which you will need to run `npm install`).
+Running outside a Docker container will require you to also install a database client and a cache client (redis for example) and configure the app to use them in the `.env` file. You can then run the server yourself using `php artisan serve`, and compile the frontend using Vite: `npm run prod` (for which you will need to run `npm install`).
 
 
 ## E2E test in python
@@ -53,7 +53,7 @@ Running outside a Docker container will require you to also install a database c
 ## Manual testing
 - Look in `storage/logs/laravel.log` for some debug outputs
 - Set DB/CACHE env variables to database and refresh the container to use a DB explorer (like e.g. phpmyadmin).
-- Go to the frontend (default http://127.0.0.1:9000) and use it, here's an example of what it should look like:
+- Go to the frontend (default `http://127.0.0.1:9000`) and use it, here's an example of what it should look like:
 ![frontend](image.png)
 
 
@@ -73,7 +73,7 @@ Keep in mind that the database cache does not support tagging, while redis does.
 - `/clear-country-description`: Clears stored country descriptions in the database. If we already cached once from wikipedia, we will never make a request to the API and will instead use the DB
 
 ## Data Seeding Routes
-- `/seed-countries`: Runs `CountrySeeder`. Seeds the default list of countries without talking to restcountries, so it should always work.
+- `/seed-countries`: Runs `CountrySeeder`. Seeds the default list of countries without talking to [restcountries](https://restcountries.com/), so it should always work.
 - `/seed-full-countries`: Runs `FullCountrySeeder`. Not recommended as it will make a lot of network requests when requesting all countries for example. Also the restcountries API has some timeout problems so this might not be reliable (I put in a retry and timeout to the request and it's worked for me every time since, YMMV).
 
 
